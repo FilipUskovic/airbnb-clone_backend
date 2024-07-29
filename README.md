@@ -24,3 +24,4 @@ Spring boot backend of the airbnb clone
 
 #### IntelliJ
 Go in IntelliJ add the environment variables and then run it.
+# airbnb-clone_backend
