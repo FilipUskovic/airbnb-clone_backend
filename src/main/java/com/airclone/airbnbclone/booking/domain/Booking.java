@@ -100,7 +100,6 @@ public class Booking extends AbstractAuditingEntity<Long> {
         return fkListing;
     }
 
-
     public void setFkListing(UUID fkListing) {
         this.fkListing = fkListing;
     }
