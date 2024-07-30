@@ -10,10 +10,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.core.user.OAuth2User;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.text.MessageFormat;
 import java.util.Map;
@@ -30,8 +27,8 @@ public class AuthResource {
     }
 
     @GetMapping("/get-authenticated-user")
-    public ResponseEntity<ReadUserDTO> getAuthenticatedUser(@AuthenticationPrincipal OAuth2User user,
-                                                            @RequestParam boolean forceResync) {
+    public ResponseEntity<ReadUserDTO> getAuthenticatedUser(
+            @AuthenticationPrincipal OAuth2User user, @RequestParam boolean forceResync) {
         if(user == null) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         } else {
@@ -40,7 +37,7 @@ public class AuthResource {
             return new ResponseEntity<>(connectedUser, HttpStatus.OK);
         }
     }
-
+    @PostMapping("/logout")
     public ResponseEntity<Map<String, String>> logout(HttpServletRequest request) {
         String issuerUri = clientRegistration.getProviderDetails().getIssuerUri();
         String originUrl = request.getHeader(HttpHeaders.ORIGIN);

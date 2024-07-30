@@ -16,41 +16,43 @@ public class SecurityUtils {
 
     public static final String ROLE_TENANT = "ROLE_TENANT";
     public static final String ROLE_LANDLORD = "ROLE_LANDLORD";
-    public static final String CLAIMS_NAMESPACE = "https://fico.hr/roles";
+    public static final String CLAIMS_NAMESPACE = "https://www.fico.hr/roles";
 
     public static User mapOauth2AttributeToUser(Map<String, Object> attributes) {
         User user = new User();
         String sub = String.valueOf(attributes.get("sub"));
+
         String username = null;
-        if(attributes.get("preferred_username") != null) {
+
+        if (attributes.get("preferred_username") != null) {
             username = ((String) attributes.get("preferred_username")).toLowerCase();
         }
 
-        if(attributes.get("given_name") != null) {
+        if (attributes.get("given_name") != null) {
             user.setFirstName(((String) attributes.get("given_name")));
-        } else if (attributes.get("nickname") != null) {
+        } else if ((attributes.get("nickname") != null)) {
             user.setFirstName(((String) attributes.get("nickname")));
         }
 
-        if(attributes.get("family_name") != null) {
+        if (attributes.get("family_name") != null) {
             user.setLastName(((String) attributes.get("family_name")));
         }
 
-        if(attributes.get("email") != null) {
+        if (attributes.get("email") != null) {
             user.setEmail(((String) attributes.get("email")));
-        }else if(sub.contains("|") && (username != null && username.contains("@"))) {
+        } else if (sub.contains("|") && (username != null && username.contains("@"))) {
             user.setEmail(username);
-        }else {
+        } else {
             user.setEmail(sub);
         }
 
-        if(attributes.get("picture") != null) {
+        if (attributes.get("picture") != null) {
             user.setImageUrl(((String) attributes.get("picture")));
         }
 
         if(attributes.get(CLAIMS_NAMESPACE) != null) {
-            List<String> autoritiesRaw = (List<String>) attributes.get(CLAIMS_NAMESPACE);
-            Set<Authority> authorities = autoritiesRaw.stream()
+            List<String> authoritiesRaw = (List<String>) attributes.get(CLAIMS_NAMESPACE);
+            Set<Authority> authorities = authoritiesRaw.stream()
                     .map(authority -> {
                         Authority auth = new Authority();
                         auth.setName(authority);
