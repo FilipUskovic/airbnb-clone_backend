@@ -77,14 +77,14 @@ public class SecurityUtils {
 
     public static boolean hasCurrentUserAnyOfAuthorites(String ...authorities) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return (authentication != null && getAuthorities(authentication).anyMatch(authority ->
-                Arrays.asList(authorities).contains(authority)));
+        return (authentication != null && getAuthorities(authentication)
+                .anyMatch(authority -> Arrays.asList(authorities).contains(authority)));
     }
 
     private static Stream<String> getAuthorities(Authentication authentication){
-        Collection<? extends GrantedAuthority> authorities = authentication instanceof JwtAuthenticationToken
-                jwtAuthenticationToken ? extractedAuthorityFromClaims(jwtAuthenticationToken.getToken().
-                getClaims()) : authentication.getAuthorities();
+        Collection<? extends GrantedAuthority> authorities = authentication
+                instanceof JwtAuthenticationToken jwtAuthenticationToken ?
+                extractedAuthorityFromClaims(jwtAuthenticationToken.getToken().getClaims()) : authentication.getAuthorities();
         return authorities.stream().map(GrantedAuthority::getAuthority);
     }
 }

@@ -77,7 +77,7 @@ public class UserService {
         }
     }
 
-    public Optional<ReadUserDTO> getByPublicId(UUID  publicId) {
+    public Optional<ReadUserDTO> getByPublicId(UUID publicId) {
         Optional<User> oneByPublicId = userRepository.findOneByPublicId(publicId);
         return oneByPublicId.map(userMapper::readUserDTOToUser);
     }

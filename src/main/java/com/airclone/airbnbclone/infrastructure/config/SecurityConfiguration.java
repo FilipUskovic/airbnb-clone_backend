@@ -41,9 +41,9 @@ public class SecurityConfiguration {
             Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
 // kada se usr ulogir moramo proslijediti spring securit-u role koje user ima
             authorities.forEach(grantedAuthority -> {
-                if(authorities instanceof OidcUserAuthority oidcUserAuthority) {
-                    grantedAuthorities.addAll(SecurityUtils.extractedAuthorityFromClaims(oidcUserAuthority.getUserInfo()
-                            .getClaims()));
+                if (grantedAuthority instanceof OidcUserAuthority oidcUserAuthority) {
+                    grantedAuthorities
+                            .addAll(SecurityUtils.extractedAuthorityFromClaims(oidcUserAuthority.getUserInfo().getClaims()));
                 }
             });
             return grantedAuthorities;
