@@ -21,6 +21,7 @@ spring:
   jpa:
     open-in-view: false
     hibernate:
+      #validatamo schmeu posto korsitimo liqubase
       ddl-auto: validate
     properties:
       hibernate:
@@ -31,7 +32,6 @@ spring:
     change-log: classpath:db/changelog/master.xml
     default-schema: airbnb_clone
     enabled: true
-    liquibase-schema: airbnb_clone
     #drop-first: true
   servlet:
     multipart:
@@ -40,7 +40,7 @@ spring:
       max-request-size: 100MB
 server:
   port: 8080
-
+# dodali smo env varibale
 okta:
   oauth2:
     issuer: https://airbnbclone.eu.auth0.com/
