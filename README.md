@@ -25,3 +25,5 @@ Spring boot backend of the airbnb clone
 #### IntelliJ
 Go in IntelliJ add the environment variables and then run it.
 # airbnb-clone_backend
+
+koristio auth0 za autentifikaciju, takoder koristio luqibase i spring jpa te ovdje dosta radim s auditListingom
