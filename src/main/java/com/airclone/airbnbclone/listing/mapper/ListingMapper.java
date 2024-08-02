@@ -1,10 +1,14 @@
 package com.airclone.airbnbclone.listing.mapper;
 
 import com.airclone.airbnbclone.listing.application.dto.CreatedListingDTO;
+import com.airclone.airbnbclone.listing.application.dto.DisplayCardListingDTO;
 import com.airclone.airbnbclone.listing.application.dto.SaveListingDTO;
+import com.airclone.airbnbclone.listing.application.dto.value.PriceValue;
 import com.airclone.airbnbclone.listing.domain.Listing;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+
+import java.util.List;
 
 @Mapper(componentModel = "spring", uses = ListingPictureMapper.class)
 public interface ListingMapper {
@@ -28,5 +32,14 @@ public interface ListingMapper {
 
     CreatedListingDTO listingToCreatedListingDTO(Listing listing);
 
+    @Mapping(target = "cover", source = "pictures")
+    List<DisplayCardListingDTO> listingToDisplayCardListingDTOs(List<Listing> listings);
 
+    @Mapping(target = "cover", source = "pictures", qualifiedByName = "extract-cover")
+    DisplayCardListingDTO listingToDisplayCardListingDTO(Listing listing);
+
+    // trebamo default metod obje da konverta priceValue objet u price
+    default PriceValue mapPriceToPriceVO(int price) {
+        return new PriceValue(price);
+    }
 }

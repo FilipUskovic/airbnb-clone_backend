@@ -21,10 +21,10 @@ public interface ListingPictureMapper {
     @Mapping(target = "cover", source = "isCover")
    ListingPicture pictureDTOToListingPicturee(PictureDTO pictureDTO);
 
+    List<PictureDTO> listingPictureToPictureDTO(List<ListingPicture> listingPictures);
+
     @Mapping(target = "isCover", source = "cover")
     PictureDTO convertToPictureDTO(ListingPicture listingPicture);
-
-    List<PictureDTO> listingPictureToPictureDTO(List<ListingPicture> listingPictures);
 
     // return picture we extract in the cover
     @Named("extract-cover")

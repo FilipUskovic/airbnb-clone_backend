@@ -1,12 +1,21 @@
-package com.airclone.airbnbclone.listing.application.dto;
+package com.airclone.airbnbclone.listing.application;
 
+import com.airclone.airbnbclone.listing.application.dto.CreatedListingDTO;
+import com.airclone.airbnbclone.listing.application.dto.DisplayCardListingDTO;
+import com.airclone.airbnbclone.listing.application.dto.SaveListingDTO;
 import com.airclone.airbnbclone.listing.domain.Listing;
 import com.airclone.airbnbclone.listing.mapper.ListingMapper;
 import com.airclone.airbnbclone.listing.repository.ListingRepository;
+import com.airclone.airbnbclone.sharedkernel.service.State;
 import com.airclone.airbnbclone.user.application.dto.ReadUserDTO;
 import com.airclone.airbnbclone.user.application.service.Auth0Service;
 import com.airclone.airbnbclone.user.application.service.UserService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.SequencedCollection;
+import java.util.UUID;
 
 @Service
 public class LandLordService {
@@ -34,5 +43,23 @@ public class LandLordService {
         auth0Service.addLandlordRoleToUser(userConnected);
         return mapper.listingToCreatedListingDTO(savedListing);
 
+    }
+
+    @Transactional(readOnly = true)
+    public List<DisplayCardListingDTO> getAllProperties(ReadUserDTO landlord) {
+        List<Listing> properties = listingRepository.findAllByLandLordPublicIdFetchCoverPicture(landlord.publicId());
+        return mapper.listingToDisplayCardListingDTOs(properties);
+    }
+
+    // Posto se brise nije samo readonly jel logicno
+    @Transactional
+    public State<UUID, String> delete(UUID publicId, ReadUserDTO landlord) {
+        // ovjde radimo 2 parametra jer zelim osigurati sam da landlord koji sadrzi listing moze ga i obrisati
+        long deletedSuccessfully = listingRepository.deleteByPublicIdAndLandlordPublicId(publicId,landlord.publicId());
+        if (deletedSuccessfully > 0) {
+            return State.<UUID, String>builder().forSuccess(publicId);
+        } else {
+            return State.<UUID,String>builder().forUnauthorized("User not authorized to delete  this listing");
+        }
     }
 }

@@ -1,4 +1,4 @@
-package com.airclone.airbnbclone.listing.application.dto;
+package com.airclone.airbnbclone.listing.application;
 
 import com.airclone.airbnbclone.listing.application.dto.sub.PictureDTO;
 import com.airclone.airbnbclone.listing.domain.Listing;
