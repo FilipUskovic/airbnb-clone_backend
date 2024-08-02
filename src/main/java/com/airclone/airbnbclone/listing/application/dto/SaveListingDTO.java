@@ -13,7 +13,7 @@ import java.util.List;
 public class SaveListingDTO {
 
     @NotNull
-    BookingCategory bookingCategory;
+    BookingCategory category;
 
     @NotNull
     String location;
@@ -33,12 +33,12 @@ public class SaveListingDTO {
     @NotNull
     List<PictureDTO> pictures;
 
-    public @NotNull BookingCategory getBookingCategory() {
-        return bookingCategory;
+    public @NotNull BookingCategory getCategory() {
+        return category;
     }
 
-    public void setBookingCategory(@NotNull BookingCategory bookingCategory) {
-        this.bookingCategory = bookingCategory;
+    public void setCategory(@NotNull BookingCategory category) {
+        this.category = category;
     }
 
     public @NotNull String getLocation() {

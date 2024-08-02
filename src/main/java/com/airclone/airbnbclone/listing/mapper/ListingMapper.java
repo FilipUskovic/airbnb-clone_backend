@@ -20,7 +20,7 @@ public interface ListingMapper {
     @Mapping(target = "description", source = "description.description.value")
     @Mapping(target = "bedrooms", source = "infos.bedrooms.value")
     @Mapping(target = "guests", source = "infos.guests.value")
-    @Mapping(target = "bookingCategory", source = "bookingCategory")
+    @Mapping(target = "bookingCategory", source = "category")
     @Mapping(target = "beds", source = "infos.beds.value")
     @Mapping(target = "bathrooms", source = "infos.baths.value")
     @Mapping(target = "price", source = "price.value")

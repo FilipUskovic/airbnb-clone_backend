@@ -4,6 +4,6 @@ import jakarta.validation.constraints.NotNull;
 
 public record DescriptionsValue(
         @NotNull(message = "Descriptions value must be present")
-        int value
+        String value
 ) {
 }

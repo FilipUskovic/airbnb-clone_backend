@@ -10,8 +10,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,14 +32,14 @@ public class LandLordResources {
     private final LandLordService landLordService;
     private final Validator validator;
     private final UserService userService;
-    private ObjectMapper mapper;
+    private ObjectMapper objectMapper = new ObjectMapper();
 
     public LandLordResources(LandLordService landLordService, Validator validator, UserService userService) {
         this.landLordService = landLordService;
         this.validator = validator;
         this.userService = userService;
     }
-
+    @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<CreatedListingDTO> create(
             MultipartHttpServletRequest multipartHttpServletRequest,
             @RequestPart(name = "dto") String saveListingDTOString
@@ -48,7 +50,7 @@ public class LandLordResources {
                 .toList();
 
         // deserilizacija
-        SaveListingDTO saveListingDTO = mapper.readValue(saveListingDTOString, SaveListingDTO.class);
+        SaveListingDTO saveListingDTO = objectMapper.readValue(saveListingDTOString, SaveListingDTO.class);
         saveListingDTO.setPictures(pictures);
         // da budemo sigurni da je validatn validitrati cemo
         Set<ConstraintViolation<SaveListingDTO>> violations = validator.validate(saveListingDTO);
