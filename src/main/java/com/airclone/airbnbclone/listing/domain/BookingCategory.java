@@ -1,13 +1,13 @@
 package com.airclone.airbnbclone.listing.domain;
 
 public enum BookingCategory {
-    ALL,
-    AMAZING_VIEWS,
-    OMG, TREEHOUSE,
+    ALL, BEACH,CAMPERS,
+    AMAZING_VIEWS,TOWER,
+    OMG, TREEHOUSES,
     FARMS, TINY_HOMES,
     LAKES, CONTAINERS, CAMPING,
     CASTLE, ARTIC, BOAT,
-    BEED_AND_BREAKFAST,
-    ROOMS,
+    BED_AND_BREAKFEST,
+    ROOMS, SKIING,
     CAVES, LUXES, CHEF
 }

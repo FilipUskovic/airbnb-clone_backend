@@ -2,6 +2,7 @@ package com.airclone.airbnbclone.infrastructure.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -25,6 +26,11 @@ public class SecurityConfiguration {
         CsrfTokenRequestAttributeHandler requestHandler = new CsrfTokenRequestAttributeHandler();
         requestHandler.setCsrfRequestAttributeName(null);
         http.authorizeHttpRequests(authorize -> authorize
+                // dodali smo za requestmacher za front kod tenatn-a jer ovo bi trebalo bit vidljivo svim userima
+                // i onima koju nisu logirani
+                        .requestMatchers(HttpMethod.GET, "/api/tenant-listing/get-all-by-category").permitAll()
+                // i za json conutry isto trebamo dozvoliti
+                        .requestMatchers(HttpMethod.GET, "assets/*").permitAll()
                 .anyRequest().authenticated())
                 .csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                         .csrfTokenRequestHandler(requestHandler))
