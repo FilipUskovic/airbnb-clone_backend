@@ -36,8 +36,8 @@ public class TenantResource {
     }
 
     @GetMapping("/get-one")
-    public ResponseEntity<DisplayListingDTO> getOne(@RequestParam UUID pubicId) {
-        State<DisplayListingDTO, String> displayListingState = tenantService.getOne(pubicId);
+    public ResponseEntity<DisplayListingDTO> getOne(@RequestParam UUID publicId) {
+        State<DisplayListingDTO, String> displayListingState = tenantService.getOne(publicId);
         if(displayListingState.getStatus().equals(StatusNotification.OK)){
             return ResponseEntity.ok(displayListingState.getValue());
         }else {

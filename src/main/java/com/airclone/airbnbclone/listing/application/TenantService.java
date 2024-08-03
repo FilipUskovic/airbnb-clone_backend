@@ -43,15 +43,18 @@ public class TenantService {
     @Transactional(readOnly = true)
     public State<DisplayListingDTO, String> getOne(UUID publicId) {
         Optional<Listing> listingByPublicIdOpt = listingRepository.findByPublicId(publicId);
+
         if (listingByPublicIdOpt.isEmpty()) {
-            return State.<DisplayListingDTO, String>builder().forError(String.format(
-                    "Listing with id %s doesn not exist", publicId));
+            return State.<DisplayListingDTO, String>builder()
+                    .forError(String.format("Listing doesn't exist for publicId: %s", publicId));
         }
+
         DisplayListingDTO displayListingDTO = listingMapper.listingToDisplayListingDTO(listingByPublicIdOpt.get());
-        // da bi mogli dohvatiti informacij od landlord-a
+
         ReadUserDTO readUserDTO = userService.getByPublicId(listingByPublicIdOpt.get().getLandlordPublicId()).orElseThrow();
-        LandLordListingDTO landLordListingDTO = new LandLordListingDTO(readUserDTO.firstName(), readUserDTO.imageUrl());
-        displayListingDTO.setLandlord(landLordListingDTO);
+        LandLordListingDTO landlordListingDTO = new LandLordListingDTO(readUserDTO.firstName(), readUserDTO.imageUrl());
+        displayListingDTO.setLandlord(landlordListingDTO);
+
         return State.<DisplayListingDTO, String>builder().forSuccess(displayListingDTO);
     }
 }
