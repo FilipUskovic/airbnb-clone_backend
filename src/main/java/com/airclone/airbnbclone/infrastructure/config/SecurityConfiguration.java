@@ -29,9 +29,11 @@ public class SecurityConfiguration {
                 // dodali smo za requestmacher za front kod tenatn-a jer ovo bi trebalo bit vidljivo svim userima
                 // i onima koju nisu logirani
                         .requestMatchers(HttpMethod.GET, "/api/tenant-listing/get-all-by-category").permitAll()
-                // i za json conutry isto trebamo dozvoliti
+                        .requestMatchers(HttpMethod.GET, "/api/tenant-listing/get-one").permitAll()
+
+                        // i za json conutry isto trebamo dozvoliti
                         .requestMatchers(HttpMethod.GET, "assets/*").permitAll()
-                .anyRequest().authenticated())
+                        .anyRequest().authenticated())
                 .csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                         .csrfTokenRequestHandler(requestHandler))
                 .oauth2Login(Customizer.withDefaults())

@@ -2,6 +2,7 @@ package com.airclone.airbnbclone.listing.mapper;
 
 import com.airclone.airbnbclone.listing.application.dto.CreatedListingDTO;
 import com.airclone.airbnbclone.listing.application.dto.DisplayCardListingDTO;
+import com.airclone.airbnbclone.listing.application.dto.DisplayListingDTO;
 import com.airclone.airbnbclone.listing.application.dto.SaveListingDTO;
 import com.airclone.airbnbclone.listing.application.dto.value.PriceValue;
 import com.airclone.airbnbclone.listing.domain.Listing;
@@ -42,4 +43,16 @@ public interface ListingMapper {
     default PriceValue mapPriceToPriceVO(int price) {
         return new PriceValue(price);
     }
+
+    @Mapping(target =  "landlord", ignore = true)
+    @Mapping(target = "description.title.value", source = "title")
+    @Mapping(target = "description.description.value", source = "description")
+    @Mapping(target = "infos.bedrooms.value", source = "bedrooms")
+    @Mapping(target = "infos.beds.value", source = "beds")
+    @Mapping(target = "infos.baths.value", source = "bathrooms")
+    @Mapping(target = "category", source = "bookingCategory")
+    @Mapping(target = "price.value", source = "price")
+    DisplayListingDTO listingToDisplayListingDTO(Listing listing);
+
+
 }
