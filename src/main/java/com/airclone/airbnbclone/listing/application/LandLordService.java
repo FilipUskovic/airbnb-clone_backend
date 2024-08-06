@@ -2,6 +2,7 @@ package com.airclone.airbnbclone.listing.application;
 
 import com.airclone.airbnbclone.listing.application.dto.CreatedListingDTO;
 import com.airclone.airbnbclone.listing.application.dto.DisplayCardListingDTO;
+import com.airclone.airbnbclone.listing.application.dto.ListingCreateBookingDTO;
 import com.airclone.airbnbclone.listing.application.dto.SaveListingDTO;
 import com.airclone.airbnbclone.listing.domain.Listing;
 import com.airclone.airbnbclone.listing.mapper.ListingMapper;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -63,5 +65,10 @@ public class LandLordService {
         } else {
             return State.<UUID,String>builder().forUnauthorized("User not authorized to delete  this listing");
         }
+    }
+
+    public Optional<ListingCreateBookingDTO> getByListingPublicId(UUID publicId){
+            return listingRepository.findByPublicId(publicId).map(mapper::listingToListingCreateBookingDTO);
+
     }
 }
