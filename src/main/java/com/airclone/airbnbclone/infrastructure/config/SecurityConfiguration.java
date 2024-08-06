@@ -30,7 +30,6 @@ public class SecurityConfiguration {
                 // i onima koju nisu logirani
                         .requestMatchers(HttpMethod.GET, "/api/tenant-listing/get-all-by-category").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/tenant-listing/get-one").permitAll()
-
                         // i za json conutry isto trebamo dozvoliti
                         .requestMatchers(HttpMethod.GET, "assets/*").permitAll()
                         .anyRequest().authenticated())

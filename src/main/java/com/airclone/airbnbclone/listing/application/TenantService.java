@@ -42,7 +42,9 @@ public class TenantService {
     }
     @Transactional(readOnly = true)
     public State<DisplayListingDTO, String> getOne(UUID publicId) {
+
         Optional<Listing> listingByPublicIdOpt = listingRepository.findByPublicId(publicId);
+
 
         if (listingByPublicIdOpt.isEmpty()) {
             return State.<DisplayListingDTO, String>builder()
@@ -53,8 +55,8 @@ public class TenantService {
 
         ReadUserDTO readUserDTO = userService.getByPublicId(listingByPublicIdOpt.get().getLandlordPublicId()).orElseThrow();
         LandLordListingDTO landlordListingDTO = new LandLordListingDTO(readUserDTO.firstName(), readUserDTO.imageUrl());
-        displayListingDTO.setLandlord(landlordListingDTO);
 
+        displayListingDTO.setLandlord(landlordListingDTO);
         return State.<DisplayListingDTO, String>builder().forSuccess(displayListingDTO);
     }
 }

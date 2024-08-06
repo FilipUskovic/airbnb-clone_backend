@@ -6,6 +6,8 @@ import com.airclone.airbnbclone.listing.application.dto.DisplayListingDTO;
 import com.airclone.airbnbclone.listing.domain.BookingCategory;
 import com.airclone.airbnbclone.sharedkernel.service.State;
 import com.airclone.airbnbclone.sharedkernel.service.StatusNotification;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -18,12 +20,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
 
-import static org.springframework.http.ProblemDetail.forStatusAndDetail;
 
 @RestController
 @RequestMapping("/api/tenant-listing")
 public class TenantResource {
 
+    private static final Logger log = LoggerFactory.getLogger(TenantResource.class);
     private final TenantService tenantService;
 
     public TenantResource(TenantService tenantService) {
@@ -38,10 +40,10 @@ public class TenantResource {
     @GetMapping("/get-one")
     public ResponseEntity<DisplayListingDTO> getOne(@RequestParam UUID publicId) {
         State<DisplayListingDTO, String> displayListingState = tenantService.getOne(publicId);
-        if(displayListingState.getStatus().equals(StatusNotification.OK)){
+        if (displayListingState.getStatus().equals(StatusNotification.OK)) {
             return ResponseEntity.ok(displayListingState.getValue());
-        }else {
-            ProblemDetail problemDetail = forStatusAndDetail(HttpStatus.BAD_REQUEST, displayListingState.getError());
+        } else {
+            ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, displayListingState.getError());
             return ResponseEntity.of(problemDetail).build();
         }
     }

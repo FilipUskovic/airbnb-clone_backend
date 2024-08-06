@@ -10,15 +10,17 @@ import com.airclone.airbnbclone.sharedkernel.service.State;
 import com.airclone.airbnbclone.user.application.dto.ReadUserDTO;
 import com.airclone.airbnbclone.user.application.service.Auth0Service;
 import com.airclone.airbnbclone.user.application.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.SequencedCollection;
 import java.util.UUID;
 
 @Service
 public class LandLordService {
+    private static final Logger log = LoggerFactory.getLogger(LandLordService.class);
     private final ListingRepository listingRepository;
     private final ListingMapper mapper;
     private final UserService userService;
