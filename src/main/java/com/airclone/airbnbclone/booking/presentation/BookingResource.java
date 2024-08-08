@@ -4,12 +4,14 @@ import com.airclone.airbnbclone.booking.application.BookingService;
 import com.airclone.airbnbclone.booking.application.dto.BookedDateDTO;
 import com.airclone.airbnbclone.booking.application.dto.BookedListingDTO;
 import com.airclone.airbnbclone.booking.application.dto.NewBookingDTO;
+import com.airclone.airbnbclone.infrastructure.config.SecurityUtils;
 import com.airclone.airbnbclone.sharedkernel.service.State;
 import com.airclone.airbnbclone.sharedkernel.service.StatusNotification;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -46,13 +48,19 @@ public class BookingResource {
         return ResponseEntity.ok(bookingService.getBookedListings());
     }
     @DeleteMapping("cancel")
-    public ResponseEntity<UUID> cancel(@RequestParam UUID bookingPublicId, @RequestParam UUID listingPublicId){
-        State<UUID, String> cancelState = bookingService.cancelReservation(bookingPublicId, listingPublicId);
+    public ResponseEntity<UUID> cancel(@RequestParam UUID bookingPublicId, @RequestParam UUID listingPublicId, @RequestParam boolean forLandLord){
+        State<UUID, String> cancelState = bookingService.cancelReservation(bookingPublicId, listingPublicId, forLandLord);
         if (cancelState.getStatus().equals(StatusNotification.ERROR)) {
             ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, cancelState.getError());
             return ResponseEntity.of(problemDetail).build();
         }else {
             return ResponseEntity.ok(bookingPublicId);
         }
+    }
+
+    @GetMapping("get-booked-listing-for-landlord")
+    @PreAuthorize("hasAnyRole('" + SecurityUtils.ROLE_LANDLORD + "')")
+    public ResponseEntity<List<BookedListingDTO>> getBookedListingForLandLord(){
+        return ResponseEntity.ok(bookingService.getBookedListingForLandLord());
     }
 }

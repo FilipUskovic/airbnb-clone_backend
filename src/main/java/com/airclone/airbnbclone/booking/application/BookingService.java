@@ -6,6 +6,7 @@ import com.airclone.airbnbclone.booking.application.dto.NewBookingDTO;
 import com.airclone.airbnbclone.booking.domain.Booking;
 import com.airclone.airbnbclone.booking.mapper.BookingMapper;
 import com.airclone.airbnbclone.booking.repository.BookingRepository;
+import com.airclone.airbnbclone.infrastructure.config.SecurityUtils;
 import com.airclone.airbnbclone.listing.application.LandLordService;
 import com.airclone.airbnbclone.listing.application.dto.DisplayCardListingDTO;
 import com.airclone.airbnbclone.listing.application.dto.ListingCreateBookingDTO;
@@ -98,14 +99,41 @@ public class BookingService {
     }
 
     @Transactional
-    public State<UUID, String> cancelReservation(UUID bookingPublicId, UUID listingPublicId) {
+    public State<UUID, String> cancelReservation(UUID bookingPublicId, UUID listingPublicId, boolean byLandlord) {
         ReadUserDTO connectedUser = userService.getAuthenticatedUserFromSpringSecurity();
-        int deleteSuccess = bookingRepository.deleteBookingByFkTenantAndPublicId(connectedUser.publicId(), bookingPublicId);
-        if(deleteSuccess >= 1){
+     //   int deleteSuccess = bookingRepository.deleteBookingByFkTenantAndPublicId(connectedUser.publicId(), bookingPublicId);
+        // modificirati cemo ovo da moze i landlord i user cancelat rezervaciju
+        int deleteSuccess = 0;
+
+        if (SecurityUtils.hasCurrentUserAnyOfAuthorites(SecurityUtils.ROLE_LANDLORD)
+                && byLandlord) {
+            deleteSuccess = handleDeletionForLandLord(bookingPublicId, listingPublicId, connectedUser, deleteSuccess);
+        } else {
+            deleteSuccess = bookingRepository.deleteBookingByFkTenantAndPublicId(connectedUser.publicId(), bookingPublicId);
+        }
+
+        if (deleteSuccess >= 1) {
             return State.<UUID, String>builder().forSuccess(bookingPublicId);
-        }else {
+        } else {
             return State.<UUID, String>builder().forError("Booking not found");
         }
+    }
+
+    private int handleDeletionForLandLord(UUID bookingPublicId, UUID listingPublicId, ReadUserDTO connectedUser, int deleteSuccess) {
+        Optional<DisplayCardListingDTO> listingVerificationOpt = landLordService.getByPublicIdAndLandlordPublicId(listingPublicId, connectedUser.publicId());
+        if (listingVerificationOpt.isPresent()) {
+            deleteSuccess = bookingRepository.deleteBookingByPublicIdAndFkListing(bookingPublicId, listingVerificationOpt.get().publicId());
+        }
+        return deleteSuccess;
+    }
+
+    @Transactional(readOnly = true)
+    public List<BookedListingDTO> getBookedListingForLandLord(){
+        ReadUserDTO connectedUser = userService.getAuthenticatedUserFromSpringSecurity();
+        List<DisplayCardListingDTO> allProperties = landLordService.getAllProperties(connectedUser);
+        List<UUID> listOfPublicIds = allProperties.stream().map(DisplayCardListingDTO::publicId).toList();
+        List<Booking> allBookings = bookingRepository.findAllByFkListingIn(listOfPublicIds);
+        return mapBookingToBookedListing(allBookings, allProperties);
     }
 
 }
