@@ -71,4 +71,9 @@ public class LandLordService {
             return listingRepository.findByPublicId(publicId).map(mapper::listingToListingCreateBookingDTO);
 
     }
+
+    public List<DisplayCardListingDTO> getCardDisplayByListingPublicId(List<UUID> allListingPublicIds) {
+        return listingRepository.findAllByPublicIdIn(allListingPublicIds)
+                .stream().map(mapper::listingToDisplayCardListingDTO).toList();
+    }
 }

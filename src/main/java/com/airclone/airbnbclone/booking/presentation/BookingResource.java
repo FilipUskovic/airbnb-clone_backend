@@ -2,6 +2,7 @@ package com.airclone.airbnbclone.booking.presentation;
 
 import com.airclone.airbnbclone.booking.application.BookingService;
 import com.airclone.airbnbclone.booking.application.dto.BookedDateDTO;
+import com.airclone.airbnbclone.booking.application.dto.BookedListingDTO;
 import com.airclone.airbnbclone.booking.application.dto.NewBookingDTO;
 import com.airclone.airbnbclone.sharedkernel.service.State;
 import com.airclone.airbnbclone.sharedkernel.service.StatusNotification;
@@ -38,5 +39,20 @@ public class BookingResource {
     @GetMapping("check-availability")
     public ResponseEntity<List<BookedDateDTO>> checkAvailability(@RequestParam UUID listingPublicId){
         return ResponseEntity.ok(bookingService.checkAvailability(listingPublicId));
+    }
+
+    @GetMapping("get-booked-listing")
+    public ResponseEntity<List<BookedListingDTO>> getBookedListingDTO(){
+        return ResponseEntity.ok(bookingService.getBookedListings());
+    }
+    @DeleteMapping("cancel")
+    public ResponseEntity<UUID> cancel(@RequestParam UUID bookingPublicId, @RequestParam UUID listingPublicId){
+        State<UUID, String> cancelState = bookingService.cancelReservation(bookingPublicId, listingPublicId);
+        if (cancelState.getStatus().equals(StatusNotification.ERROR)) {
+            ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, cancelState.getError());
+            return ResponseEntity.of(problemDetail).build();
+        }else {
+            return ResponseEntity.ok(bookingPublicId);
+        }
     }
 }

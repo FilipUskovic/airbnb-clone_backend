@@ -30,5 +30,5 @@ public interface ListingRepository extends JpaRepository<Listing, Long> {
 
     Optional<Listing> findByPublicId(UUID publicId);
 
-
+    List<Listing> findAllByPublicIdIn(List<UUID> allListingPublicIds);
 }

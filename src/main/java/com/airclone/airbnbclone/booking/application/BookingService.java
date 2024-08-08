@@ -1,12 +1,15 @@
 package com.airclone.airbnbclone.booking.application;
 
 import com.airclone.airbnbclone.booking.application.dto.BookedDateDTO;
+import com.airclone.airbnbclone.booking.application.dto.BookedListingDTO;
 import com.airclone.airbnbclone.booking.application.dto.NewBookingDTO;
 import com.airclone.airbnbclone.booking.domain.Booking;
 import com.airclone.airbnbclone.booking.mapper.BookingMapper;
 import com.airclone.airbnbclone.booking.repository.BookingRepository;
 import com.airclone.airbnbclone.listing.application.LandLordService;
+import com.airclone.airbnbclone.listing.application.dto.DisplayCardListingDTO;
 import com.airclone.airbnbclone.listing.application.dto.ListingCreateBookingDTO;
+import com.airclone.airbnbclone.listing.application.dto.value.PriceValue;
 import com.airclone.airbnbclone.sharedkernel.service.State;
 import com.airclone.airbnbclone.user.application.dto.ReadUserDTO;
 import com.airclone.airbnbclone.user.application.service.UserService;
@@ -67,4 +70,41 @@ public class BookingService {
         return bookingRepository.findAllByFkListing(publicId)
                 .stream().map(bookingMapper::bookingToCheckAvailability).toList();
     }
+    @Transactional(readOnly = true)
+    public List<BookedListingDTO> getBookedListings(){
+        ReadUserDTO connectedUser = userService.getAuthenticatedUserFromSpringSecurity();
+        List<Booking> allBookings = bookingRepository.findAllByFkTenant(connectedUser.publicId());
+        //extraktam sve listingId
+        List<UUID> allListingPublicId = allBookings.stream().map(Booking::getFkListing).toList();
+        List<DisplayCardListingDTO> allListings = landLordService.getCardDisplayByListingPublicId(allListingPublicId);
+        // pokusavm mergati sve bookinge i sve listinge
+         return mapBookingToBookedListing(allBookings, allListings);
+
+    }
+
+    private List<BookedListingDTO> mapBookingToBookedListing(List<Booking> allBookings, List<DisplayCardListingDTO> allListings) {
+        return allBookings.stream().map(booking -> {
+            DisplayCardListingDTO displayCardListingDTO = allListings.stream()
+                    .filter(listing -> listing.publicId().equals(booking.getFkListing()))
+                    .findFirst()
+                    .orElseThrow();
+            BookedDateDTO dates = bookingMapper.bookingToCheckAvailability(booking);
+            return new BookedListingDTO(displayCardListingDTO.cover(),
+                                        displayCardListingDTO.location(),
+                                        dates,
+                                        new PriceValue(booking.getTotalPrice()),
+                                        booking.getPublicId(), displayCardListingDTO.publicId());
+        }).toList();
+    }
+
+    public State<UUID, String> cancelReservation(UUID bookingPublicId, UUID listingPublicId) {
+        ReadUserDTO connectedUser = userService.getAuthenticatedUserFromSpringSecurity();
+        int deleteSuccess = bookingRepository.deleteBookingByFkTenantAndPublicId(connectedUser.publicId(), bookingPublicId);
+        if(deleteSuccess >= 1){
+            return State.<UUID, String>builder().forSuccess(bookingPublicId);
+        }else {
+            return State.<UUID, String>builder().forError("Booking not found");
+        }
+    }
+
 }
