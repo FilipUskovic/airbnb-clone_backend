@@ -28,8 +28,9 @@ public class SecurityConfiguration {
         http.authorizeHttpRequests(authorize -> authorize
                 // dodali smo za requestmacher za front kod tenatn-a jer ovo bi trebalo bit vidljivo svim userima
                 // i onima koju nisu logirani
-                        .requestMatchers(HttpMethod.GET, "/api/tenant-listing/get-all-by-category").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/tenant-listing/get-one").permitAll()
+                        .requestMatchers(HttpMethod.GET, "api/tenant-listing/get-all-by-category").permitAll()
+                        .requestMatchers(HttpMethod.GET, "api/tenant-listing/get-one").permitAll()
+                        .requestMatchers(HttpMethod.GET, "api/booking/check-availability").permitAll()
                         // i za json conutry isto trebamo dozvoliti
                         .requestMatchers(HttpMethod.GET, "assets/*").permitAll()
                         .anyRequest().authenticated())
