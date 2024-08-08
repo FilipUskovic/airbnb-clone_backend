@@ -31,6 +31,7 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.GET, "api/tenant-listing/get-all-by-category").permitAll()
                         .requestMatchers(HttpMethod.GET, "api/tenant-listing/get-one").permitAll()
                         .requestMatchers(HttpMethod.GET, "api/booking/check-availability").permitAll()
+                        .requestMatchers(HttpMethod.POST, "api/tenant-listing/search").permitAll()
                         // i za json conutry isto trebamo dozvoliti
                         .requestMatchers(HttpMethod.GET, "assets/*").permitAll()
                         .anyRequest().authenticated())

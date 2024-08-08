@@ -48,8 +48,8 @@ public class BookingResource {
         return ResponseEntity.ok(bookingService.getBookedListings());
     }
     @DeleteMapping("cancel")
-    public ResponseEntity<UUID> cancel(@RequestParam UUID bookingPublicId, @RequestParam UUID listingPublicId, @RequestParam boolean forLandLord){
-        State<UUID, String> cancelState = bookingService.cancelReservation(bookingPublicId, listingPublicId, forLandLord);
+    public ResponseEntity<UUID> cancel(@RequestParam UUID bookingPublicId, @RequestParam UUID listingPublicId, @RequestParam boolean byLandLord){
+        State<UUID, String> cancelState = bookingService.cancelReservation(bookingPublicId, listingPublicId, byLandLord);
         if (cancelState.getStatus().equals(StatusNotification.ERROR)) {
             ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, cancelState.getError());
             return ResponseEntity.of(problemDetail).build();
