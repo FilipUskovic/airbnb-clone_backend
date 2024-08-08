@@ -97,6 +97,7 @@ public class BookingService {
         }).toList();
     }
 
+    @Transactional
     public State<UUID, String> cancelReservation(UUID bookingPublicId, UUID listingPublicId) {
         ReadUserDTO connectedUser = userService.getAuthenticatedUserFromSpringSecurity();
         int deleteSuccess = bookingRepository.deleteBookingByFkTenantAndPublicId(connectedUser.publicId(), bookingPublicId);
